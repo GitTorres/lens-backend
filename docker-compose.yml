@@ -1,6 +1,7 @@
 version: '2'
 services:
   fastapi:
+    container_name: fastapi
     build:
       context: ./
       dockerfile: fastapi.dockerfile
@@ -9,8 +10,12 @@ services:
     ports:
       - 8000:8000
     environment:
-      MONGODB_HOST: mongo
-      MONGODB_PORT: 27017
+      MONGODB_HOST: ${MONGO_HOST}
+      MONGODB_PORT: ${MONGO_PORT}
       MONGODB_USER: ${MONGO_USER}
       MONGODB_PASSWORD: ${MONGO_PASSWORD}
       PYTHONPATH: /app
+networks:
+  default:
+    external: true
+    name: mongo-docker_default

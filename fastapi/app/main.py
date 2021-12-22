@@ -1,16 +1,43 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from pydantic import BaseModel
 from typing import List
 from pymongo import MongoClient
 import os
 from urllib.parse import quote_plus
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional, Dict
+from fastapi.responses import JSONResponse
+
+# read tomorrow
+# https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
+
+origins = ["http://0.0.0.0:3000", "http://localhost:3000"]
 
 
-origins = [
-    "http://0.0.0.0:3000",
-    "http://localhost:3000"
-]
+class FeatureSummaryData(BaseModel):  # pylint: disable=missing-class-docstring
+    bin_edge_right: List[float]
+    sum_target: List[float]
+    sum_prediction: List[float]
+    sum_weight: List[float]
+    wtd_avg_prediction: List[float]
+    wtd_avg_target: List[float]
+
+
+class FeatureSummary(BaseModel):  # pylint: disable=missing-class-docstring
+    name: str
+    data: FeatureSummaryData
+
+
+class GLMSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
+    name: str
+    desc: str
+    target: str
+    prediction: str
+    var_weights: str
+    link_function: str
+    error_dist: str
+    explained_variance: float
+    feature_summary: List[FeatureSummary]
 
 
 app = FastAPI()
@@ -21,48 +48,42 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-mongo_client = None
+mongo_client: Optional[MongoClient] = None
 
 
-def get_client():
+def get_client() -> MongoClient:
     """
     Setup a mongo client for the site
     :return:
     """
     global mongo_client
-    if bool(mongo_client):
-        return mongo_client
-    host = os.getenv('MONGODB_HOST', '')
-    username = os.getenv('MONGODB_USER', '')
-    password = os.getenv('MONGODB_PASSWORD', '')
-    port = int(os.getenv('MONGODB_PORT', 27017))
-    endpoint = 'mongodb://{0}:{1}@{2}'.format(quote_plus(username),
-                                              quote_plus(password), host)
-    mongo_client = MongoClient(endpoint, port)
+
+    if mongo_client is None:
+        host: str = os.getenv("MONGODB_HOST", "mongo")
+        username: str = quote_plus(os.getenv("MONGODB_USER", ""))
+        password: str = quote_plus(os.getenv("MONGODB_PASSWORD", ""))
+        port: int = int(os.getenv("MONGODB_PORT", 27017))
+        uri: str = f"mongodb://{username}:{password}@{host}:{port}"
+        mongo_client = MongoClient(uri, serverSelectionTimeoutMS=1000)
+
     return mongo_client
 
 
-class ComicIssue(BaseModel):
-    id: int
-    number: str
-    series_name: str
-    on_sale_date: str
-    price: str
-    publisher_name: str
-
-
-@app.get('/')
+@app.get("/")
 async def root():
-    return {'message': 'Hello World'}
+    return {"message": "Hello World"}
 
 
-@app.get('/comics/{title}/{issue_number}', response_model=List[ComicIssue])
-async def get_comic_issues(title: str, issue_number: str): 
-    criteria = {'series_name': title, 'number': issue_number}
+@app.get("/modelsummary/glm/{name}/", response_model=List[GLMSummaryPayload])
+async def get_glm_summary(name: str):
+    criteria = {"name": name}
     client = get_client()
-    db = client.farmdemo
-    issues = db.issues.find(criteria)
-    data = list()
-    for issue in issues:
-        data.append(ComicIssue(**issue))
-    return data
+    db = client["models"]
+    clcn = db["models"]
+    summaries = clcn.find(criteria)
+
+    response: List[GLMSummaryPayload] = []
+    for summary in summaries:
+        response.append(GLMSummaryPayload(**summary))
+
+    return response
