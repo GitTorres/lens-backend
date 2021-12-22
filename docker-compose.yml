@@ -1,0 +1,16 @@
+version: '2'
+services:
+  fastapi:
+    build:
+      context: ./
+      dockerfile: fastapi.dockerfile
+    volumes:
+      - './fastapi:/app'
+    ports:
+      - 8000:8000
+    environment:
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_USER: ${MONGO_USER}
+      MONGODB_PASSWORD: ${MONGO_PASSWORD}
+      PYTHONPATH: /app
