@@ -7,6 +7,7 @@ from urllib.parse import quote_plus
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict
 from fastapi.responses import JSONResponse
+from functools import reduce
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
@@ -74,13 +75,27 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/modelsummary/glm/{name}/", response_model=List[GLMSummaryPayload])
-async def get_glm_summary(name: str):
-    criteria = {"name": name}
+@app.get("/supervised/", response_model=List[GLMSummaryPayload])
+async def get_glm_summary(
+    name: str,
+    desc: Optional[str] = None,
+    min_explained_variance: Optional[float] = None,
+    max_explained_variance: Optional[float] = None,
+):
+
+    name_cond = {"name": name}
+    desc_cond = {"desc": {"$regex": desc}}
+    explained_variance_cond = {
+        "explained_variance": {"$lt": max_explained_variance},
+        "explained_variance": {"$gt": min_explained_variance},
+    }
+    query = [name_cond, desc_cond, explained_variance_cond]
+
+    query = reduce(lambda accum_query, curr_query: {**accum_query, **curr_query},)
     client = get_client()
     db = client["models"]
     clcn = db["models"]
-    summaries = clcn.find(criteria)
+    summaries = await clcn.find(criteria)
 
     response: List[GLMSummaryPayload] = []
     for summary in summaries:
