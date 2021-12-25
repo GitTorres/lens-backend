@@ -1,13 +1,14 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional, Tuple
 from pymongo import MongoClient
+from pymongo.cursor import Cursor
 import os
 from urllib.parse import quote_plus
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict
-from fastapi.responses import JSONResponse
 from functools import reduce
+from utils.query import build_filter_query
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
@@ -29,7 +30,7 @@ class FeatureSummary(BaseModel):  # pylint: disable=missing-class-docstring
     data: FeatureSummaryData
 
 
-class GLMSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
+class RegressionSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
     name: str
     desc: str
     target: str
@@ -72,33 +73,55 @@ def get_client() -> MongoClient:
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Udabest"}
 
 
-@app.get("/supervised/", response_model=List[GLMSummaryPayload])
-async def get_glm_summary(
-    name: str,
+@app.get("/modelsummary/regression", response_model=List[RegressionSummaryPayload])
+async def get_regression_summary(
+    name: Optional[str] = None,
     desc: Optional[str] = None,
     min_explained_variance: Optional[float] = None,
     max_explained_variance: Optional[float] = None,
 ):
 
-    name_cond = {"name": name}
-    desc_cond = {"desc": {"$regex": desc}}
-    explained_variance_cond = {
-        "explained_variance": {"$lt": max_explained_variance},
-        "explained_variance": {"$gt": min_explained_variance},
-    }
-    query = [name_cond, desc_cond, explained_variance_cond]
+    # name filter
+    name_filter: Tuple = ("name", name, "$eq")
 
-    query = reduce(lambda accum_query, curr_query: {**accum_query, **curr_query},)
+    # description filter
+    desc_filter: Optional[Tuple] = ("desc", desc, "$regex") if desc else None
+
+    # min variance filter
+    min_var_filter: Optional[Tuple] = (
+        ("explained_variance", min_explained_variance, "$gte")
+        if min_explained_variance
+        else None
+    )
+
+    # max variance filter
+    max_var_filter: Optional[Tuple] = (
+        ("explained_variance", max_explained_variance, "$lte")
+        if max_explained_variance
+        else None
+    )
+
+    params: List[Tuple] = [
+        param
+        for param in [name_filter, desc_filter, min_var_filter, max_var_filter]
+        if param
+    ]
+
+    # map supplied param filters to valid Object Notation
+    query: Dict = build_filter_query(params)
+
+    print(query)
+
     client = get_client()
     db = client["models"]
     clcn = db["models"]
-    summaries = await clcn.find(criteria)
+    summaries: Cursor = clcn.find(query)  # cursors are not awaitable
 
-    response: List[GLMSummaryPayload] = []
+    response: List[RegressionSummaryPayload] = []
     for summary in summaries:
-        response.append(GLMSummaryPayload(**summary))
+        response.append(RegressionSummaryPayload(**summary))
 
     return response
