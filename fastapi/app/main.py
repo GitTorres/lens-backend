@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from typing import List, Optional, Tuple
 from pymongo import MongoClient
@@ -78,14 +78,15 @@ async def root():
 
 @app.get("/modelsummary/regression", response_model=List[RegressionSummaryPayload])
 async def get_regression_summary(
-    name: Optional[str] = None,
-    desc: Optional[str] = None,
-    min_explained_variance: Optional[float] = None,
-    max_explained_variance: Optional[float] = None,
+    name: Optional[str] = Query(None),
+    desc: Optional[str] = Query(None),
+    min_explained_variance: Optional[float] = Query(None),
+    max_explained_variance: Optional[float] = Query(None),
+    features: Optional[List[str]] = Query(None),
 ):
 
     # name filter
-    name_filter: Tuple = ("name", name, "$eq")
+    name_filter: Optional[Tuple] = ("name", name, "$eq") if name else None
 
     # description filter
     desc_filter: Optional[Tuple] = ("desc", desc, "$regex") if desc else None
@@ -104,14 +105,27 @@ async def get_regression_summary(
         else None
     )
 
+    # feature filter
+    feature_filter: Optional[Tuple] = (
+        ("feature_summary.name", features, "$in") if features else None
+    )
+
     params: List[Tuple] = [
         param
-        for param in [name_filter, desc_filter, min_var_filter, max_var_filter]
+        for param in [
+            name_filter,
+            desc_filter,
+            min_var_filter,
+            max_var_filter,
+            feature_filter,
+        ]
         if param
     ]
 
+    print(params)
+
     # map supplied param filters to valid Object Notation
-    query: Dict = build_filter_query(params)
+    query: Dict = build_filter_query(params) if len(params) > 0 else {}
 
     print(query)
 

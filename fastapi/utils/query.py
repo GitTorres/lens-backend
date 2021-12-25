@@ -1,5 +1,5 @@
 from functools import reduce
-from typing import List, Tuple, TypedDict, Union
+from typing import List, Tuple, Union
 
 
 def build_filter_query(params: List[Tuple]):
@@ -12,13 +12,13 @@ def build_filter_query(params: List[Tuple]):
     Output: Dict
     """
 
-    def _to_SON(name: str, val: Union[str, float], op: str):
+    def _to_SON(name: str, val: Union[str, float, List], op: str):
         # return valid SON for a given operator
-        assert op in ["$eq", "$gt", "$gte", "$lt", "$lte", "$regex"]
+        assert op in ["$in", "$eq", "$gt", "$gte", "$lt", "$lte", "$regex"]
 
         if op == "$eq":
             return {name: val}
-        elif op in ["$gt", "$gte", "$lt", "$lte"]:
+        elif op in ["$in", "$gt", "$gte", "$lt", "$lte"]:
             return {name: {op: val}}
         else:  # op == '$regex'
             return {name: {"$regex": val}}
