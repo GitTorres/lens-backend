@@ -80,8 +80,8 @@ async def root():
 async def get_regression_summary(
     name: Optional[str] = Query(None),
     desc: Optional[str] = Query(None),
-    min_explained_variance: Optional[float] = Query(None),
-    max_explained_variance: Optional[float] = Query(None),
+    min_explained_variance: Optional[float] = Query(None, ge=0, le=1),
+    max_explained_variance: Optional[float] = Query(None, ge=0, le=1),
     features: Optional[List[str]] = Query(None),
 ):
 
