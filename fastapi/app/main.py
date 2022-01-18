@@ -13,7 +13,9 @@ from utils.query import build_filter_query
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
 
-origins = ["http://0.0.0.0:3000", "http://localhost:3000"]
+local_dev_origins = ["http://0.0.0.0:3000", "http://localhost:3000"]
+local_prod_origins = ["http://0.0.0.0:8080", "http://localhost:8080"]
+origins = local_dev_origins + local_prod_origins
 
 
 class FeatureSummaryData(BaseModel):  # pylint: disable=missing-class-docstring
