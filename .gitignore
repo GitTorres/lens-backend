@@ -136,3 +136,10 @@ data/mongo
 
 # wtf is this file
 .DS_store*
+
+# jupyter notebooks
+*.ipynb_checkpoints
+*.ipynb
+
+# vs code settings
+settings.json
