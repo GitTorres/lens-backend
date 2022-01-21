@@ -4,11 +4,16 @@ from typing import List, Optional, Tuple
 from pymongo import MongoClient
 from pymongo.cursor import Cursor
 import os
+import time
+from fastapi.encoders import jsonable_encoder
 from urllib.parse import quote_plus
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict
 from functools import reduce
 from utils.query import build_filter_query
+from bson.binary import Binary, UuidRepresentation
+from bson import decode
+from uuid import uuid4
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
@@ -141,3 +146,38 @@ async def get_regression_summary(
         response.append(RegressionSummaryPayload(**summary))
 
     return response
+
+
+# references to overcome issues encoding UUID as binary and encoding pydantic types as json
+
+# https://stackoverflow.com/questions/23983079/using-pythons-uuid-to-generate-unique-ids-should-i-still-check-for-duplicates
+# https://fastapi.tiangolo.com/tutorial/encoder/
+# https://pymongo.readthedocs.io/en/stable/examples/uuid.html
+# https://pymongo.readthedocs.io/en/stable/api/bson/binary.html
+
+
+@app.put("/modelsummary/regression", response_model=str)
+async def insert_regression_summary(summary: RegressionSummaryPayload):
+    client = get_client()
+    db = client["models"]
+    clcn = db["models"]
+
+    # generate unique id
+    binary_uuid = Binary.from_uuid(
+        uuid=uuid4(), uuid_representation=UuidRepresentation.STANDARD
+    )
+
+    # created at
+    created = time.time()
+
+    # add summary to database
+    try:
+        insert_result = clcn.insert_one(
+            {"_id": binary_uuid, "created_time": created, **jsonable_encoder(summary)}
+        )
+
+        response_msg = time.ctime(created)
+    except:
+        response_msg = "error"
+
+    return response_msg
