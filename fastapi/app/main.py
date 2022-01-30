@@ -172,7 +172,7 @@ async def insert_regression_summary(summary: RegressionSummaryPayload):
 
     # add summary to database
     try:
-        insert_result = clcn.insert_one(
+        _ = clcn.insert_one(
             {"_id": binary_uuid, "created_time": created, **jsonable_encoder(summary)}
         )
 
