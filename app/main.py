@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from typing import List, Optional, Tuple
@@ -14,6 +15,7 @@ from utils.query import build_filter_query
 from bson.binary import Binary, UuidRepresentation
 from bson import decode
 from uuid import uuid4
+from models.types import RegressionSummaryPayload
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
@@ -21,33 +23,6 @@ from uuid import uuid4
 local_dev_origins = ["http://0.0.0.0:3000", "http://localhost:3000"]
 local_prod_origins = ["http://0.0.0.0:8080", "http://localhost:8080"]
 origins = local_dev_origins + local_prod_origins
-
-
-class FeatureSummaryData(BaseModel):  # pylint: disable=missing-class-docstring
-    bin_edge_right: List[float]
-    sum_target: List[float]
-    sum_prediction: List[float]
-    sum_weight: List[float]
-    wtd_avg_prediction: List[float]
-    wtd_avg_target: List[float]
-
-
-class FeatureSummary(BaseModel):  # pylint: disable=missing-class-docstring
-    name: str
-    data: FeatureSummaryData
-
-
-class RegressionSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
-    name: str
-    desc: str
-    target: str
-    prediction: str
-    var_weights: str
-    link_function: str
-    error_dist: str
-    explained_variance: float
-    feature_summary: List[FeatureSummary]
-
 
 app = FastAPI()
 app.add_middleware(
@@ -168,15 +143,19 @@ async def insert_regression_summary(summary: RegressionSummaryPayload):
     )
 
     # created at
-    created = time.time()
+    inserted_time = time.time()
 
     # add summary to database
     try:
         _ = clcn.insert_one(
-            {"_id": binary_uuid, "created_time": created, **jsonable_encoder(summary)}
+            {
+                "_id": binary_uuid,
+                "inserted_time": inserted_time,
+                **jsonable_encoder(summary),
+            }
         )
 
-        response_msg = time.ctime(created)
+        response_msg = "ok"
     except:
         response_msg = "error"
 
