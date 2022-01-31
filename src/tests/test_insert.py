@@ -3,6 +3,7 @@ from models.types import RegressionSummaryPayload
 from datetime import datetime, timezone
 from typing import List
 import unittest
+import os, asyncio
 
 model_summary_template = {
     "created_time": "1900-01-01T01:01:01.000000+00:00",
@@ -30,7 +31,7 @@ model_summary_template = {
 }
 
 
-class TestInsertRegressionSummary(unittest.TestCase):
+class TestInsertRegressionSummary(unittest.IsolatedAsyncioTestCase):
     # violates snake-case naming convention
     def setUp(self):
         # sample data structure
@@ -62,4 +63,4 @@ class TestInsertRegressionSummary(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=3)
+    unittest.main(verbosity=2)

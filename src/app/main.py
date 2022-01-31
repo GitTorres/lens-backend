@@ -11,11 +11,11 @@ from urllib.parse import quote_plus
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict
 from functools import reduce
-from utils.query import build_filter_query
+from app.utils.query import build_filter_query
 from bson.binary import Binary, UuidRepresentation
 from bson import decode
 from uuid import uuid4
-from models.types import RegressionSummaryPayload
+from app.types import RegressionSummaryPayload
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d

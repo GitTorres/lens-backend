@@ -1,12 +1,14 @@
-version: '2'
+# @format
+
+version: "3.8"
 services:
   fastapi:
     container_name: fastapi
     build:
-      context: ./
+      context: ./src
       dockerfile: fastapi.dockerfile
     volumes:
-      - './app:/app'
+      - "./src:/app"
     ports:
       - 8000:8000
     environment:
@@ -14,7 +16,9 @@ services:
       MONGODB_PORT: ${MONGO_PORT}
       MONGODB_USER: ${MONGO_USER}
       MONGODB_PASSWORD: ${MONGO_PASSWORD}
-      PYTHONPATH: /app
+      PYTHONPATH: /src
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level debug --reload
+
 networks:
   default:
     external: true
