@@ -8,3 +8,5 @@ bash:
 	docker exec -it fastapi bash
 build:
 	docker compose build
+test:
+	docker compose exec fastapi pytest .

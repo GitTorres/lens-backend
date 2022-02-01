@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Union
 from datetime import datetime
 
 
@@ -18,7 +18,7 @@ class FeatureSummary(BaseModel):  # pylint: disable=missing-class-docstring
 
 
 class RegressionSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
-    created_time: datetime
+    created_time: Union[datetime, str]
     name: str
     desc: str
     target: str
