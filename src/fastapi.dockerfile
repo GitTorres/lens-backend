@@ -17,7 +17,7 @@ ENV PYTHONUNBUFFERED 1
 COPY app/requirements.txt /app/requirements.txt
 
 # install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade  -r requirements.txt
 
 # open up webserver port
 EXPOSE 8000
