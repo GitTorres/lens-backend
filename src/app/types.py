@@ -18,7 +18,7 @@ class FeatureSummary(BaseModel):  # pylint: disable=missing-class-docstring
 
 
 class RegressionSummaryPayload(BaseModel):  # pylint: disable=missing-class-docstring
-    created_time: Union[datetime, str]
+    created_time: datetime
     name: str
     desc: str
     target: str
@@ -28,3 +28,7 @@ class RegressionSummaryPayload(BaseModel):  # pylint: disable=missing-class-docs
     error_dist: str
     explained_variance: float
     feature_summary: List[FeatureSummary]
+
+
+class ApiResponse(BaseModel):
+    response: str

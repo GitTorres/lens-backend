@@ -15,7 +15,7 @@ from app.utils.query import build_filter_query
 from bson.binary import Binary, UuidRepresentation
 from bson import decode
 from uuid import uuid4
-from app.types import RegressionSummaryPayload
+from app.types import RegressionSummaryPayload, ApiResponse
 
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
@@ -131,7 +131,7 @@ async def get_regression_summary(
 # https://pymongo.readthedocs.io/en/stable/api/bson/binary.html
 
 
-@app.put("/modelsummary/regression", response_model=str)
+@app.put("/modelsummary/regression", response_model=ApiResponse)
 async def insert_regression_summary(summary: RegressionSummaryPayload):
     client = get_client()
     db = client["models"]
@@ -155,8 +155,8 @@ async def insert_regression_summary(summary: RegressionSummaryPayload):
             }
         )
 
-        response_msg = "ok"
+        response_msg = {"response": "ok"}
     except:
-        response_msg = "error"
+        response_msg = {"response": "error"}
 
     return response_msg
