@@ -1,3 +1,5 @@
+# @format
+
 name: CI with DigitalOcean Container Registry
 
 # Controls when the workflow will run
@@ -12,7 +14,7 @@ on:
 jobs:
   build-and-push-to-digital-ocean:
     # Ensure test job passes before pushing image.
-#     needs: test
+    # needs: test
     runs-on: ubuntu-latest
     env:
       IMAGE_REGISTRY: registry.digitalocean.com/lens
@@ -21,7 +23,7 @@ jobs:
     steps:
       - name: checkout master
         uses: actions/checkout@v2
-        
+
       - name: create .env for `make build` command
         run: |
           touch .env
@@ -30,13 +32,13 @@ jobs:
           echo MONGODB_HOST=mongo >> .env
           echo MONGODB_PORT=27017 >> .env
           cat .env
-        
+
       - name: build image
         run: make build # use the docker build command from makefile
-        
+
       - name: tag image
         run: docker tag $REPO_$APPNAME:latest $IMAGE_REGISTRY/$APPNAME:$(echo $GITHUB_SHA | head -c7)
-    
+
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -44,6 +46,6 @@ jobs:
 
       - name: login to doctl
         run: doctl registry login --expiry-seconds 600
-        
+
       - name: push image to DO registry
         run: docker push $IMAGE_REGISTRY/$APPNAME
