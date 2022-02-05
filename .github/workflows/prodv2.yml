@@ -37,7 +37,7 @@ jobs:
         run: make build # use the docker build command from makefile
 
       - name: tag image
-        run: docker tag $REPO_$APPNAME:latest $IMAGE_REGISTRY/$APPNAME:$(echo $GITHUB_SHA | head -c7)
+        run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
       - name: install doctl
         uses: digitalocean/action-doctl@v2
@@ -48,4 +48,4 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: push image to DO registry
-        run: docker push $IMAGE_REGISTRY/$APPNAME
+        run: docker push ${IMAGE_REGISTRY}/${APPNAME}
