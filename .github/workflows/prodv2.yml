@@ -16,6 +16,7 @@ jobs:
     # Ensure test job passes before pushing image.
     # needs: test
     runs-on: ubuntu-latest
+    environment: prod-digital-ocean
     env:
       IMAGE_REGISTRY: registry.digitalocean.com/lens
       APPNAME: fastapi
