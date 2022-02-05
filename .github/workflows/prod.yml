@@ -17,6 +17,7 @@ jobs:
     env:
       IMAGE_REGISTRY: registry.digitalocean.com/lens
       IMAGE_NAME: fastapi
+      REPO: lens-backend
     steps:
       - name: checkout master
         uses: actions/checkout@v2
@@ -34,7 +35,7 @@ jobs:
         run: make build # use the docker build command from makefile
         
       - name: tag image
-        run: docker tag $IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
+        run: docker tag $REPO:latest $IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
     
       - name: install doctl
         uses: digitalocean/action-doctl@v2
