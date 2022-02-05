@@ -9,29 +9,29 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  #Push to Digital Ocean private Registry
   build-and-push-to-digital-ocean:
     # Ensure test job passes before pushing image.
 #     needs: test
     runs-on: ubuntu-latest
+    env:
+      IMAGE_REGISTRY: registry.digitalocean.com/lens
+      IMAGE_NAME: fastapi
     steps:
       - name: checkout master
         uses: actions/checkout@v2
         
+      - name: create .env for `make build` command
+        run: |
+          touch .env
+          echo MONGODB_USER="root" >> .env
+          echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
+          echo MONGODB_HOST=mongo >> .env
+          echo MONGODB_PORT=27017 >> .env
+          cat .env
+        
       - name: build image
         run: make build # use the docker build command from makefile
-        
-#       - name: Update SHA
-#         run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/site/_meta
-      
-      - name: set DO registry
-        run: export IMAGE_REGISTRY=registry.digitalocean.com/lens
-        
-      - name: set image name
-        run: export IMAGE_NAME=fastapi
         
       - name: tag image
         run: docker tag $IMAGE_REGISTRY/$IMAGE_NAME:$(echo $GITHUB_SHA | head -c7)
