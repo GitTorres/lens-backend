@@ -24,7 +24,7 @@ jobs:
       - name: create .env for `make build` command
         run: |
           touch .env
-          echo MONGODB_USER="root" >> .env
+          echo MONGODB_USER=root >> .env
           echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
           echo MONGODB_HOST=mongo >> .env
           echo MONGODB_PORT=27017 >> .env
