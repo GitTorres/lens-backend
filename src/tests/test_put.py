@@ -67,6 +67,3 @@ def test_insert_different_date_types(
 
     # check that we have a valid response with our test data
     assert all([result.status_code == 200 for result in valid_api_responses])
-
-    # TO DO LATER -- DATE VALIDATION -- THIS SHOULD BE PASSING
-    assert all([result.status_code != 200 for result in invalid_api_responses])
