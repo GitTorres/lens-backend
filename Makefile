@@ -3,7 +3,7 @@ up:
 down:
 	docker compose down
 rebuild:
-	docker compose up -d --build 
+	docker compose up -d --build --force-recreate --renew-anon-volumes
 bash:
 	docker exec -it fastapi bash
 build:

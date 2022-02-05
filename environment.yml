@@ -1,0 +1,8 @@
+name: lens-backend
+channels:
+  - defaults
+dependencies:
+  - python=3.8.10
+  - black
+  - mypy
+prefix: /Users/galois/miniconda3/envs/lens-backend
