@@ -13,10 +13,8 @@ services:
     ports:
       - 8000:8000
     environment:
-      MONGODB_HOST: ${MONGO_HOST}
-      MONGODB_PORT: ${MONGO_PORT}
-      MONGODB_USER: ${MONGO_USER}
-      MONGODB_PASSWORD: ${MONGO_PASSWORD}
+      env_file: 
+        - .env
       PYTHONPATH: /src
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level debug --reload
 
