@@ -1,11 +1,11 @@
+# bash:
+# 	docker exec -it fastapi bash
 up:
 	docker compose up -d
 down:
 	docker compose down
 rebuild:
 	docker compose up -d --build --force-recreate --renew-anon-volumes
-bash:
-	docker exec -it fastapi bash
 build:
 	docker compose build
 test_utils:
