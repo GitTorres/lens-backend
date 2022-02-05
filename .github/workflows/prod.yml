@@ -39,7 +39,7 @@ jobs:
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:
-            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: login to doctl
         run: doctl registry login --expiry-seconds 600
