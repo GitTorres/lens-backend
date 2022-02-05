@@ -1,5 +1,5 @@
 # pull from official base image (switch to alpine to dec image size)
-FROM python:3.8.10
+FROM python:3.8.10-alpine
 
 # create /app folder
 RUN mkdir /app
