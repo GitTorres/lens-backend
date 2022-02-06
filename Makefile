@@ -8,14 +8,12 @@ up_prod:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --no-deps -d
 down:
 	docker compose down
-build_dev:
-	docker compose up -d --build --force-recreate --renew-anon-volumes --no-deps
-build_prod:
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 test_utils:
 	docker compose exec fastapi pytest . -sv -m "utils"
 test_put:
 	docker compose exec fastapi pytest . -sv -m "put"
+build_prod:
+	docker compose -f docker-compose.yml -f docker-compose.stage.yml build
 remove:
 	docker compose down
 	docker container rm lens-backend_fastapi:latest || true

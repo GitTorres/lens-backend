@@ -1,3 +1,5 @@
+# used to run production image
+
 version: "3.8"
 services:
   fastapi:

@@ -1,4 +1,4 @@
-# @format
+# build or run development image (see also docker-compose.dev.yml)
 
 version: "3.8"
 services:

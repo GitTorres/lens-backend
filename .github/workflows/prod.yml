@@ -25,7 +25,7 @@ jobs:
       - name: checkout master
         uses: actions/checkout@v2
 
-      - name: create .env for `make build` command
+      - name: create .env for next step
         run: |
           touch .env
           echo MONGODB_USER=root >> .env
@@ -35,7 +35,7 @@ jobs:
           cat .env
 
       - name: build image
-        run: make build_prod # use the docker build command from makefile
+        run: make build_prod
 
       - name: tag image
         run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)

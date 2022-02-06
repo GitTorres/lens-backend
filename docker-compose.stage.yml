@@ -1,4 +1,4 @@
-# checking prod build locally
+# used to build production image
 
 version: "3.8"
 services:
