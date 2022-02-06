@@ -1,0 +1,6 @@
+tests/
+.pytest_cache/
+pytest.ini
+
+*.dockerfile
+*.Dockerfile
