@@ -29,8 +29,5 @@ RUN rm -rf /app
 # production image
 FROM dev as prod
 
-# update the working directory
-WORKDIR /
-
 # copy app files, except for what is excluded via .dockerignore
 COPY . .

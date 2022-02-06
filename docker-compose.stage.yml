@@ -1,7 +1,10 @@
+# checking prod build locally
+
 version: "3.8"
 services:
   fastapi:
-    image: $PRODUCTION_IMAGE
+    build:
+      target: prod
     expose:
       - "8082"
     ports:

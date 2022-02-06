@@ -1,15 +1,17 @@
 # bash:
 # 	docker exec -it fastapi bash
 up:
-	docker compose up --no-deps -d
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --no-deps -d
+up_stage:
+	docker compose -f docker-compose.yml -f docker-compose.stage.yml up --no-deps -d
 up_prod:
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --no-deps -d
 down:
 	docker compose down
-rebuild:
+build_dev:
 	docker compose up -d --build --force-recreate --renew-anon-volumes --no-deps
-build:
-	docker compose build
+build_prod:
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 test_utils:
 	docker compose exec fastapi pytest . -sv -m "utils"
 test_put:

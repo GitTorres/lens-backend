@@ -35,7 +35,7 @@ jobs:
           cat .env
 
       - name: build image
-        run: make build # use the docker build command from makefile
+        run: make build_prod # use the docker build command from makefile
 
       - name: tag image
         run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
