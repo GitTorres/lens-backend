@@ -7,7 +7,11 @@ up_stage:
 up_prod:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --no-deps -d
 down:
-	docker compose down
+	docker compose down --remove-orphans
+rebuild:
+	docker compose up -d --build --force-recreate --renew-anon-volumes
+build:
+	docker compose build
 test_utils:
 	docker compose exec fastapi pytest . -sv -m "utils"
 test_put:
