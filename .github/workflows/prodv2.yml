@@ -49,4 +49,4 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: push image to DO registry
-        run: docker push ${IMAGE_REGISTRY}/${APPNAME}
+        run: docker push ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
