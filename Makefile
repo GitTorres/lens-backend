@@ -3,7 +3,7 @@
 up:
 	docker compose up -d
 down:
-	docker compose down
+	docker compose down --remove-orphans
 rebuild:
 	docker compose up -d --build --force-recreate --renew-anon-volumes
 build:
