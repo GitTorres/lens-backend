@@ -1,11 +1,12 @@
-# used to run production image
+# used to build production image
 
 version: "3.8"
 services:
   fastapi:
-    image: $PRODUCTION_IMAGE
+    build:
+      target: prod
     expose:
       - "8082"
     ports:
       - "8082:8082"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8082 --log-level info
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8082 --log-level debug

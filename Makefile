@@ -2,22 +2,22 @@
 # 	docker exec -it fastapi bash
 up:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --no-deps -d
-up_stage:
-	docker compose -f docker-compose.yml -f docker-compose.stage.yml up --no-deps -d
 up_prod:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml up --no-deps -d
+up_deploy:
+	docker compose -f docker-compose.yml -f docker-compose.deploy.yml up --no-deps -d
 down:
 	docker compose down --remove-orphans
-rebuild:
+rebuild: #rebuilds dev stage
 	docker compose up -d --build --force-recreate --renew-anon-volumes
-build:
+build: #builds dev stage
 	docker compose build
 test_utils:
 	docker compose exec fastapi pytest . -sv -m "utils"
 test_put:
 	docker compose exec fastapi pytest . -sv -m "put"
 build_prod:
-	docker compose -f docker-compose.yml -f docker-compose.stage.yml build
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 remove:
 	docker compose down
 	docker container rm lens-backend_fastapi:latest || true

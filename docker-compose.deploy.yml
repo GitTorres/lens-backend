@@ -1,0 +1,11 @@
+# used to run the tagged production image on a deployment server
+
+version: "3.8"
+services:
+  fastapi:
+    image: $PRODUCTION_IMAGE
+    expose:
+      - "8082"
+    ports:
+      - "8082:8082"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8082 --log-level info
