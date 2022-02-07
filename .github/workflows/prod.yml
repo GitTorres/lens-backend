@@ -64,7 +64,7 @@ jobs:
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.HOST_SSH_PASSPHRASE }}
           # envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,COMMAND
-          script: whoami
+          script: ls
           # script: |
           #   # Stop running container
           #   docker stop $(echo $IMAGE_NAME)
