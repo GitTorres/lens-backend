@@ -63,6 +63,7 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSHKEY }}
           passphrase: ${{ secrets.HOST_SSH_PASSPHRASE }}
+          debug: true
           # envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,COMMAND
           script: whoami
           # script: |
