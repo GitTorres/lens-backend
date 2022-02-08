@@ -67,4 +67,5 @@ jobs:
           script: |
             doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
             doctl registry login
-            docker pull ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+            echo 'sup dawgy'
+          # docker pull ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
