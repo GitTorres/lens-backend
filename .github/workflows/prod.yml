@@ -68,4 +68,4 @@ jobs:
           script: |
             doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
             doctl registry login --expiry-seconds 600
-            echo ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
+            docker pull ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
