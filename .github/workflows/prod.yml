@@ -11,45 +11,47 @@ on:
   pull_request:
     branches:
       - master
+
+env:
+  IMAGE_REGISTRY: registry.digitalocean.com/lens
+  APPNAME: fastapi
+  REPO: lens-backend
+
 jobs:
-  # build-and-push-to-digital-ocean:
-  #   # Ensure test job passes before pushing image.
-  #   # needs: test
-  #   runs-on: ubuntu-latest
-  #   environment: prod-digital-ocean
-  #   env:
-  #     IMAGE_REGISTRY: registry.digitalocean.com/lens
-  #     APPNAME: fastapi
-  #     REPO: lens-backend
-  #   steps:
-  #     - name: checkout master
-  #       uses: actions/checkout@v2
+  build-and-push-to-container-store:
+    # Ensure test job passes before pushing image.
+    # needs: test
+    runs-on: ubuntu-latest
+    environment: prod-digital-ocean
+    steps:
+      - name: checkout master
+        uses: actions/checkout@v2
 
-  #     - name: create .env for next step
-  #       run: |
-  #         touch .env
-  #         echo MONGODB_USER=root >> .env
-  #         echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
-  #         echo MONGODB_HOST=mongo >> .env
-  #         echo MONGODB_PORT=27017 >> .env
-  #         cat .env
+      - name: create .env for next step
+        run: |
+          touch .env
+          echo MONGODB_USER=root >> .env
+          echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
+          echo MONGODB_HOST=mongo >> .env
+          echo MONGODB_PORT=27017 >> .env
+          cat .env
 
-  #     - name: build image
-  #       run: make build_prod
+      - name: build image
+        run: make build_prod
 
-  #     - name: tag image
-  #       run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+      - name: tag image
+        run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
-  #     - name: install doctl
-  #       uses: digitalocean/action-doctl@v2
-  #       with:
-  #         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-  #     - name: login to doctl
-  #       run: doctl registry login --expiry-seconds 600
+      - name: login to doctl
+        run: doctl registry login --expiry-seconds 600
 
-  #     - name: push image to DO registry
-  #       run: docker push ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+      - name: push image to DO registry
+        run: docker push ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
   deploy-to-digital-ocean:
     runs-on: ubuntu-latest
@@ -62,10 +64,10 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          # envs: IMAGE_NAME,REGISTRY,GITHUB_SHA,COMMAND
           script: |
-            cd ~
-            echo 'we fucking did it' > woohoo
+            doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            docker pull ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+
           # script: |
           #   # Stop running container
           #   docker stop $(echo $IMAGE_NAME)
