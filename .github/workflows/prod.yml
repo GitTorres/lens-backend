@@ -16,7 +16,6 @@ env:
   IMAGE_REGISTRY: registry.digitalocean.com/lens
   APPNAME: fastapi
   REPO: lens-backend
-  SHA: $GITHUB_SHA
 
 jobs:
   build-and-push-to-container-store:
@@ -65,8 +64,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          # envs: IMAGE_REGISTRY,APPNAME,GITHUB_SHA
+          envs: GITHUB_SHA
           script: |
             doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
             doctl registry login --expiry-seconds 600
-            echo ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo ${{ env.GITHUB_SHA }} | head -c7)
+            echo ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
