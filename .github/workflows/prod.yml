@@ -66,6 +66,7 @@ jobs:
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
           script: |
             doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            doctl registry login
             docker pull ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
           # script: |
