@@ -64,7 +64,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+          envs: IMAGE_NAME,APPNAME,GITHUB_SHA
           script: |
             doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-            doctl registry login
+            doctl registry login --expiry-seconds 600
             echo ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
