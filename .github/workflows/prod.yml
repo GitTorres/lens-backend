@@ -32,8 +32,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          source: "./Makefile,./docker-compose.yml,./docker-compose.deploy.yml"
-          target: "/opt/lens-backend"
+          source: "Makefile,docker-compose.yml,docker-compose.deploy.yml"
+          target: "~/lens-backend"
 
   #     - name: create .env for next step
   #       run: |
@@ -77,12 +77,3 @@ jobs:
   #       doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
   #       doctl registry login --expiry-seconds 600
   #       docker pull ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
-  #       mkdir -p /opt/lens-backend
-  # - name: Copy some files to droplet
-  #   uses: garygrossgarten/github-action-scp@release
-  #   with:
-  #     local: .
-  #     remote: /opt/lens-backend
-  #     host: ${{ secrets.HOST }}
-  #     username: ${{ secrets.HOST_USERNAME }}
-  #     privateKey: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
