@@ -25,16 +25,6 @@ jobs:
     steps:
       - name: checkout master
         uses: actions/checkout@v2
-      - name: copy Makefile and docker compose files to /opt/lens-backend in remote
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.HOST_USERNAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          source: "Makefile,docker-compose.yml,docker-compose.deploy.yml"
-          target: "~/lens-backend"
-          overwrite: true
-          debug: true
 
       - name: create .env for next step
         run: |
@@ -44,6 +34,17 @@ jobs:
           echo MONGODB_HOST=mongo >> .env
           echo MONGODB_PORT=27017 >> .env
           cat .env
+
+      - name: copy Makefile and docker compose files to /opt/lens-backend in remote
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+          source: "Makefile,.env,docker-compose.yml,docker-compose.deploy.yml"
+          target: "~/lens-backend"
+          overwrite: true
+          debug: true
 
       - name: build image
         run: make build_prod
