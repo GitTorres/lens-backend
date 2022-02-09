@@ -33,7 +33,7 @@ jobs:
           echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
           echo MONGODB_HOST=mongo >> .env
           echo MONGODB_PORT=27017 >> .env
-          echo PRODUCTION_IMAGE=${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
+          echo PRODUCTION_IMAGE=${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7) >> .env
           cat .env
 
       - name: copy Makefile and docker compose files to /opt/lens-backend in remote
