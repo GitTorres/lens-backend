@@ -32,7 +32,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          source: "./Makefile,./docker-compose.yml, ./docker-compose.deploy.yml"
+          source: "./Makefile,./docker-compose.yml,./docker-compose.deploy.yml"
           target: "/opt/lens-backend"
 
   #     - name: create .env for next step
