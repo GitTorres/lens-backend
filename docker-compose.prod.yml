@@ -4,9 +4,11 @@ version: "3.8"
 services:
   fastapi:
     build:
+      context: ./src
       target: prod
+      dockerfile: fastapi.dockerfile
     expose:
       - "8082"
     ports:
       - "8082:8082"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8082 --log-level debug
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8082 --log-level info

@@ -1,4 +1,4 @@
-# used to run the tagged production image on a deployment server
+# used to run the tagged image from the production container registry
 
 version: "3.8"
 services:

@@ -7,11 +7,12 @@ up_prod:
 up_deploy:
 	docker compose -f docker-compose.yml -f docker-compose.deploy.yml up --no-deps -d
 down:
-	docker compose down --remove-orphans
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down --remove-orphans || true
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans || true
 rebuild: #rebuilds dev stage
 	docker compose up -d --build --force-recreate --renew-anon-volumes
 build: #builds dev stage
-	docker compose build
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 test_utils:
 	docker compose exec fastapi pytest . -sv -m "utils"
 test_put:
@@ -19,7 +20,6 @@ test_put:
 build_prod:
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml build
 remove:
-	docker compose down
 	docker container rm lens-backend_fastapi:latest || true
 	docker image rm lens-backend_fastapi:latest || true
 
