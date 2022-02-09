@@ -33,49 +33,50 @@ jobs:
           echo MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} >> .env
           echo MONGODB_HOST=mongo >> .env
           echo MONGODB_PORT=27017 >> .env
+          echo PRODUCTION_IMAGE=${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
           cat .env
 
-      - name: copy Makefile and docker compose files to /opt/lens-backend in remote
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.HOST_USERNAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          source: "Makefile,.env,docker-compose.yml,docker-compose.deploy.yml"
-          target: "~/lens-backend"
-          overwrite: true
-          debug: true
+  #     - name: copy Makefile and docker compose files to /opt/lens-backend in remote
+  #       uses: appleboy/scp-action@master
+  #       with:
+  #         host: ${{ secrets.HOST }}
+  #         username: ${{ secrets.HOST_USERNAME }}
+  #         key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+  #         source: "Makefile,.env,docker-compose.yml,docker-compose.deploy.yml"
+  #         target: "~/lens-backend"
+  #         overwrite: true
+  #         debug: true
 
-      - name: build image
-        run: make build_prod
+  #     - name: build image
+  #       run: make build_prod
 
-      - name: tag image
-        run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+  #     - name: tag image
+  #       run: docker tag ${REPO}_${APPNAME}:latest ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
-      - name: install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  #     - name: install doctl
+  #       uses: digitalocean/action-doctl@v2
+  #       with:
+  #         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: login to doctl
-        run: doctl registry login --expiry-seconds 600
+  #     - name: login to doctl
+  #       run: doctl registry login --expiry-seconds 600
 
-      - name: push image to DO registry
-        run: docker push ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
+  #     - name: push image to DO registry
+  #       run: docker push ${IMAGE_REGISTRY}/${APPNAME}:$(echo $GITHUB_SHA | head -c7)
 
-  deploy-to-digital-ocean:
-    runs-on: ubuntu-latest
-    needs: build-and-push-to-container-store
-    environment: prod-digital-ocean
-    steps:
-      - name: Deploy to Digital Ocean droplet via SSH action
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.HOST_USERNAME }}
-          key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
-          envs: GITHUB_SHA
-          script: |
-            doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-            doctl registry login --expiry-seconds 600
-            docker pull ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
+  # deploy-to-digital-ocean:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push-to-container-store
+  #   environment: prod-digital-ocean
+  #   steps:
+  #     - name: Deploy to Digital Ocean droplet via SSH action
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.HOST }}
+  #         username: ${{ secrets.HOST_USERNAME }}
+  #         key: ${{ secrets.HOST_SSH_PRIVATE_KEY }}
+  #         envs: GITHUB_SHA
+  #         script: |
+  #           doctl auth init -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  #           doctl registry login --expiry-seconds 600
+  #           docker pull ${{ env.IMAGE_REGISTRY }}/${{ env.APPNAME }}:$(echo $GITHUB_SHA | head -c7)
