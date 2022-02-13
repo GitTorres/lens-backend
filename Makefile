@@ -9,6 +9,7 @@ up_deploy:
 down:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml down --remove-orphans || true
 	docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans || true
+	docker compose -f docker-compose.yml -f docker-compose.deploy.yml down --remove-orphans || true
 rebuild: #rebuilds dev stage
 	docker compose up -d --build --force-recreate --renew-anon-volumes
 build: #builds dev stage

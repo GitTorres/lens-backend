@@ -20,8 +20,9 @@ from app.types import RegressionSummaryPayload, ApiResponse
 # read tomorrow
 # https://medium.com/codex/python-typing-and-validation-with-mypy-and-pydantic-a2563d67e6d
 
-local_dev_origins = ["http://0.0.0.0:3000", "http://localhost:3000"]
-local_prod_origins = ["http://0.0.0.0:8080", "http://localhost:8080"]
+local_dev_origins = ["http://0.0.0.0:3000", "https://localhost:3000"]
+local_prod_origins = ["http://0.0.0.0:8082", "https://localhost:8082"]
+deploy_prigins = ["http://lensview.io:8082", "https://lensview.io:8082"]
 origins = local_dev_origins + local_prod_origins
 
 app = FastAPI()
