@@ -32,7 +32,8 @@ dev_origins = [
 ]
 prod_origins = [
     "http://0.0.0.0:80",
-    "http://localhost:80" "https://0.0.0.0:80",
+    "http://localhost:80", 
+    "https://0.0.0.0:80",
     "https://localhost:80",
 ]
 origins = dev_origins + prod_origins
