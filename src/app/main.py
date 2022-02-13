@@ -22,8 +22,8 @@ from app.types import RegressionSummaryPayload, ApiResponse
 
 local_dev_origins = ["http://0.0.0.0:3000", "https://localhost:3000"]
 local_prod_origins = ["http://0.0.0.0:8082", "https://localhost:8082"]
-deploy_prigins = ["http://lensview.io:8082", "https://lensview.io:8082"]
-origins = local_dev_origins + local_prod_origins
+deploy_origins = ["http://lensview.io:80", "https://lensview.io:80"]
+origins = local_dev_origins + local_prod_origins + deploy_origins
 
 app = FastAPI()
 app.add_middleware(
