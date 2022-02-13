@@ -30,12 +30,7 @@ dev_origins = [
     "https://0.0.0.0:8082",
     "https://localhost:8082",
 ]
-prod_origins = [
-    "http://0.0.0.0:80",
-    "http://localhost:80", 
-    "https://0.0.0.0:80",
-    "https://localhost:80",
-]
+prod_origins = ["http://lensview.io", "https://lensview.io"]
 origins = dev_origins + prod_origins
 
 app = FastAPI()
